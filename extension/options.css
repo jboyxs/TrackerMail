@@ -34,3 +34,18 @@ button {
 #status {
   color: GrayText;
 }
+
+.server-warning {
+  margin: 0 0 4px;
+  padding: 9px 11px;
+  border: 1px solid #ff9f0a66;
+  border-radius: 9px;
+  background: #ff9f0a18;
+  color: #b45309;
+  font-size: .9rem;
+  line-height: 1.4;
+}
+
+@media (prefers-color-scheme: dark) {
+  .server-warning { color: #ffb340; }
+}

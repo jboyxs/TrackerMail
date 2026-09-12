@@ -1,0 +1,34 @@
+name: Build Thunderbird extension
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "extension/**"
+      - ".github/workflows/extension.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: extension
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate manifest
+        run: python -m json.tool manifest.json >/dev/null
+
+      - name: Package XPI
+        run: zip -r "../thunderbird-mail-tracker-${GITHUB_SHA::7}.xpi" . -x "*.DS_Store"
+
+      - name: Upload extension artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: thunderbird-mail-tracker-${{ github.sha }}
+          path: thunderbird-mail-tracker-*.xpi
+          if-no-files-found: error
+

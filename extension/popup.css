@@ -61,6 +61,17 @@ header p,
   gap: 6px;
 }
 
+.server-warning {
+  margin: 2px 0 4px;
+  padding: 8px 10px;
+  border: 1px solid #ff9f0a66;
+  border-radius: 8px;
+  background: #ff9f0a18;
+  color: #ffb340;
+  font-size: .82rem;
+  line-height: 1.35;
+}
+
 .configuration input {
   box-sizing: border-box;
   width: 100%;

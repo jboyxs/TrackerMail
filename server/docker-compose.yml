@@ -2,7 +2,7 @@ services:
   tracker-api:
     build: .
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     environment:
       DATABASE_PATH: /data/tracker.db
       ADMIN_USERNAME: ${ADMIN_USERNAME:-jjboy}

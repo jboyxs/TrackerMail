@@ -1,8 +1,25 @@
 const form = document.querySelector("#settings-form");
 const serverUrlInput = document.querySelector("#server-url");
+const serverWarning = document.querySelector("#server-warning");
 const status = document.querySelector("#status");
 const apiTokenInput = document.querySelector("#api-token");
 const apiUsernameInput = document.querySelector("#api-username");
+
+function updateServerWarning() {
+  try {
+    const url = new URL(serverUrlInput.value.trim());
+    const insecure = url.protocol === "http:" && !["localhost", "127.0.0.1"].includes(url.hostname);
+    serverWarning.hidden = !insecure;
+    serverWarning.textContent = insecure
+      ? "⚠ 不安全连接：此 HTTP 地址会明文传输 API Token，可能被窃听。建议改用 HTTPS。"
+      : "";
+  } catch {
+    serverWarning.hidden = true;
+    serverWarning.textContent = "";
+  }
+}
+
+serverUrlInput.addEventListener("input", updateServerWarning);
 
 async function restoreOptions() {
   const { trackingSettings = {} } = await messenger.storage.local.get("trackingSettings");
@@ -13,6 +30,7 @@ async function restoreOptions() {
   serverUrlInput.value = serverUrl;
   apiTokenInput.value = trackingSettings.apiToken || "";
   apiUsernameInput.value = trackingSettings.apiUsername || "";
+  updateServerWarning();
 
   if (serverUrl !== trackingSettings.serverUrl) {
     await messenger.storage.local.set({ trackingSettings: { ...trackingSettings, serverUrl } });

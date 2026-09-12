@@ -4,6 +4,7 @@ const refreshButton = document.querySelector("#refresh");
 const template = document.querySelector("#record-template");
 const configurationForm = document.querySelector("#configuration-form");
 const serverUrlInput = document.querySelector("#server-url");
+const serverWarning = document.querySelector("#server-warning");
 const apiUsernameInput = document.querySelector("#api-username");
 const apiTokenInput = document.querySelector("#api-token");
 const health = document.querySelector("#health");
@@ -19,6 +20,22 @@ settingsToggle.addEventListener("click", () => {
 function formatDate(value) {
   return value ? new Date(value).toLocaleString() : "—";
 }
+
+function updateServerWarning() {
+  try {
+    const url = new URL(serverUrlInput.value.trim());
+    const insecure = url.protocol === "http:" && !["localhost", "127.0.0.1"].includes(url.hostname);
+    serverWarning.hidden = !insecure;
+    serverWarning.textContent = insecure
+      ? "⚠ 不安全连接：此 HTTP 地址会明文传输 API Token，可能被窃听。建议改用 HTTPS。"
+      : "";
+  } catch {
+    serverWarning.hidden = true;
+    serverWarning.textContent = "";
+  }
+}
+
+serverUrlInput.addEventListener("input", updateServerWarning);
 
 async function getConfiguration() {
   const { trackingSettings = {} } = await messenger.storage.local.get("trackingSettings");
@@ -38,6 +55,7 @@ async function restoreConfiguration() {
   serverUrlInput.value = trackingSettings.serverUrl || "https://tracker.775772.xyz";
   apiUsernameInput.value = trackingSettings.apiUsername || "";
   apiTokenInput.value = trackingSettings.apiToken || "";
+  updateServerWarning();
 }
 
 async function checkHealth(serverUrl) {

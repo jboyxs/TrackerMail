@@ -13,11 +13,13 @@ COPY pyproject.toml uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --no-install-project
 
-COPY main.py database.py models.py admin.html ./
-RUN mkdir -p /data
+COPY main.py database.py models.py admin.html entrypoint.sh ./
+RUN useradd --create-home --uid 10001 app && mkdir -p /data && chown -R app:app /app /data
 
 ENV PATH="/app/.venv/bin:$PATH"
 
 EXPOSE 8000
 
-CMD ["uv", "run", "--locked", "--no-sync", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+RUN chmod 755 /app/entrypoint.sh
+
+CMD ["/app/entrypoint.sh"]

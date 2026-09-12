@@ -1,9 +1,11 @@
 import base64
 import os
 import secrets
+import time
+from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI, HTTPException, Response, status
+from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials, HTTPAuthorizationCredentials, HTTPBearer
@@ -23,12 +25,25 @@ async def lifespan(_: FastAPI):
     initialize_database()
     yield
 
-app = FastAPI(title="Thunderbird Mail Tracker MVP", version="0.2.0", lifespan=lifespan)
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET", "POST"], allow_headers=["Authorization", "Content-Type"])
+app = FastAPI(title="Thunderbird Mail Tracker MVP", version="0.2.0", lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
+app.add_middleware(CORSMiddleware, allow_origins=["https://tracker.775772.xyz"], allow_origin_regex=r"^moz-extension://[a-z0-9-]+$", allow_methods=["GET", "POST", "DELETE"], allow_headers=["Authorization", "Content-Type"])
 
-def require_admin(credentials: HTTPBasicCredentials | None = Depends(basic_security)) -> str:
+_admin_failures: dict[str, deque[float]] = defaultdict(deque)
+_ADMIN_WINDOW_SECONDS = 900
+_ADMIN_MAX_FAILURES = 5
+
+def require_admin(request: Request, credentials: HTTPBasicCredentials | None = Depends(basic_security)) -> str:
+    address = request.client.host if request and request.client else "unknown"
+    now = time.monotonic()
+    failures = _admin_failures[address]
+    while failures and now - failures[0] > _ADMIN_WINDOW_SECONDS:
+        failures.popleft()
     if not ADMIN_PASSWORD or not credentials or not secrets.compare_digest(credentials.username, ADMIN_USERNAME) or not secrets.compare_digest(credentials.password, ADMIN_PASSWORD):
+        if len(failures) >= _ADMIN_MAX_FAILURES:
+            raise HTTPException(status_code=429, detail="Too many failed admin login attempts")
+        failures.append(now)
         raise HTTPException(status_code=401, detail="Invalid admin credentials", headers={"WWW-Authenticate": "Basic"})
+    failures.clear()
     return credentials.username
 
 def require_user(credentials: HTTPAuthorizationCredentials | None = Depends(bearer_security)) -> dict:
