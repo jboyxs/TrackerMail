@@ -148,6 +148,8 @@ async function loadRecords() {
       fragment.querySelector(".last-user-agent").textContent = record.last_user_agent || "—";
       fragment.querySelector(".last-device-fingerprint").textContent = record.last_device_fingerprint || "—";
       fragment.querySelector(".last-geo-country").textContent = record.last_geo_country || "—";
+      fragment.querySelector(".last-geo-region").textContent = record.last_geo_region || "—";
+      fragment.querySelector(".last-geo-city").textContent = record.last_geo_city || "—";
       const deleteButton = fragment.querySelector(".delete-record");
       deleteButton.addEventListener("click", async () => {
         deleteButton.disabled = true;

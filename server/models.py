@@ -21,6 +21,8 @@ class TrackRead(TrackCreate):
     last_user_agent: str | None = None
     last_device_fingerprint: str | None = None
     last_geo_country: str | None = None
+    last_geo_region: str | None = None
+    last_geo_city: str | None = None
 
     @property
     def opened(self) -> bool:

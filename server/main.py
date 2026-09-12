@@ -12,6 +12,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials, HTTPAuthorizationC
 
 from database import create_track, create_user, delete_track, disable_user, find_user_by_token, get_track, initialize_database, list_tracks, list_users, record_open, reset_user_token
 from models import TrackCreate, TrackRead, UserCreate, UserCreated, UserRead
+from geoip import lookup
 
 TRANSPARENT_PNG = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+X8E1WQAAAABJRU5ErkJggg==")
 NO_CACHE_HEADERS = {"Cache-Control": "no-store, no-cache, must-revalidate", "Pragma": "no-cache", "Expires": "0"}
@@ -119,5 +120,7 @@ async def open_pixel(tracking_id: str, request: Request) -> Response:
     ip = request.headers.get("cf-connecting-ip") or (request.client.host if request.client else "unknown")
     user_agent = request.headers.get("user-agent", "unknown")[:1000]
     geo_country = request.headers.get("cf-ipcountry")
-    record_open(tracking_id, ip[:255], user_agent, geo_country[:8] if geo_country else None)
+    geo_country = geo_country[:8] if geo_country else None
+    db_country, geo_region, geo_city = lookup(ip[:255])
+    record_open(tracking_id, ip[:255], user_agent, db_country or geo_country, geo_region, geo_city)
     return Response(content=TRANSPARENT_PNG, media_type="image/png", headers=NO_CACHE_HEADERS)
