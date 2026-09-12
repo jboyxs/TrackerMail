@@ -6,7 +6,6 @@
 
 “检测到打开 / Opened detected”只表示 tracking pixel URL 被请求，不等同于收件人真实阅读了邮件。Gmail 图片代理、Apple Mail Privacy Protection、企业邮箱安全扫描以及远程图片拦截，都可能造成误报或漏报。
 
-AI还是太好用了，我是AI大人的狗。
 <h2 align="center" style="font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI','Microsoft YaHei',sans-serif;"><sup>“</sup>AI 还是太好用了，我是 AI 大人的狗。<sup>”</sup></h2>
 
 <p align="center">
@@ -15,22 +14,40 @@ AI还是太好用了，我是AI大人的狗。
 </p>
 
 ## 使用效果及使用教程
-### 远端服务部署参考下面部署章节
-推荐uv，我喜欢uv，uv是正确的，有谁不喜欢快快的uv呢。当然docker里用的也是uv，docker的好处是隔离。
-### client端也就是客户端
-1.您需要先下载github action自动构建的.xpi插件（.zip解压之后），目前是会每次自动构建。
-![Thunderbird 扩展下载](resource/image1.png)
-2.下载完后在 Thunderbird中按 侧边栏左下角设置->扩展和主题->右上角设置->从文件安装附加组件，选择解压出的.xpi文件即可。
-![Thunderbird 安装入口](resource/image2.png)
-![选择 XPI 文件](resource/image3.png)
-3.完成远端服务器的url user token的设置
-![插件连接配置](resource/image4.png)
-4.enjoy it
-发送的时候注意点击开启邮件追踪，如下图红框。
-注意一般接收端服务器会自动发出一次请求，所以一般请求数量大于等于2时，对方才可能阅读了。
-![写信时启用追踪](resource/image5.png)
-成功喵
-![检测结果](resource/image6.png)
+远端服务部署方式请参考下方“部署”章节。客户端安装和使用步骤如下。
+
+### 1. 下载插件
+
+从 GitHub Actions 下载自动构建的 `.xpi` 插件包（如果下载的是 `.zip`，先解压）。
+
+<p align="center"><img src="resource/image1.png" alt="下载 Thunderbird 插件" width="760" /></p>
+
+### 2. 在 Thunderbird 中安装
+
+打开“设置 → 扩展和主题 → 右上角设置菜单 → 从文件安装附加组件”，选择解压后的 `.xpi` 文件。
+
+<p align="center">
+  <img src="resource/image2.png" alt="打开扩展和主题设置" width="46%" />
+  <img src="resource/image3.png" alt="从文件安装附加组件" width="46%" />
+</p>
+
+### 3. 配置追踪服务器
+
+在插件 Settings 中填写 Tracking Server URL、用户名和 API Token。
+
+<p align="center"><img src="resource/image4.png" alt="配置追踪服务器" width="520" /></p>
+
+### 4. 写信时启用追踪
+
+在 HTML 写信窗口点击 **Track Email** 开启追踪，然后发送邮件。收件端或邮箱代理可能会自动请求一次图片，因此请求次数大于等于 2 也不一定代表收件人真实阅读。
+
+<p align="center"><img src="resource/image5.png" alt="写信时启用邮件追踪" width="820" /></p>
+
+### 5. 查看检测结果
+
+打开插件 Popup，即可查看检测状态、首次检测时间、最后检测时间和请求次数。
+
+<p align="center"><img src="resource/image6.png" alt="查看邮件追踪检测结果" width="620" /></p>
 ## 项目层级
 
 ```text
