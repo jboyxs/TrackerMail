@@ -115,6 +115,9 @@ async def delete_one_track(tracking_id: str, user: dict = Depends(require_user))
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @app.get("/open/{tracking_id}.png", include_in_schema=False)
-async def open_pixel(tracking_id: str) -> Response:
-    record_open(tracking_id)
+async def open_pixel(tracking_id: str, request: Request) -> Response:
+    ip = request.headers.get("cf-connecting-ip") or (request.client.host if request.client else "unknown")
+    user_agent = request.headers.get("user-agent", "unknown")[:1000]
+    geo_country = request.headers.get("cf-ipcountry")
+    record_open(tracking_id, ip[:255], user_agent, geo_country[:8] if geo_country else None)
     return Response(content=TRANSPARENT_PNG, media_type="image/png", headers=NO_CACHE_HEADERS)

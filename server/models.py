@@ -17,6 +17,10 @@ class TrackRead(TrackCreate):
     first_opened_at: datetime | None = None
     last_opened_at: datetime | None = None
     open_count: int = 0
+    last_ip: str | None = None
+    last_user_agent: str | None = None
+    last_device_fingerprint: str | None = None
+    last_geo_country: str | None = None
 
     @property
     def opened(self) -> bool:

@@ -1,4 +1,5 @@
 import hashlib
+import hmac
 import os
 import secrets
 import sqlite3
@@ -22,6 +23,10 @@ def serialize_datetime(value: datetime) -> str:
 def hash_token(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
 
+def device_fingerprint(ip: str, user_agent: str) -> str:
+    salt = os.getenv("FINGERPRINT_SALT", "development-only-change-this")
+    return hmac.new(salt.encode(), f"{ip}|{user_agent}".encode(), hashlib.sha256).hexdigest()
+
 @contextmanager
 def connect() -> Iterator[sqlite3.Connection]:
     DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -37,10 +42,13 @@ def connect() -> Iterator[sqlite3.Connection]:
 def initialize_database() -> None:
     with connect() as connection:
         connection.execute("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, token_hash TEXT NOT NULL UNIQUE, created_at TEXT NOT NULL, disabled INTEGER NOT NULL DEFAULT 0)")
-        connection.execute("CREATE TABLE IF NOT EXISTS tracks (tracking_id TEXT PRIMARY KEY, owner_id INTEGER, recipient TEXT NOT NULL, subject TEXT NOT NULL, sent_at TEXT NOT NULL, first_opened_at TEXT, last_opened_at TEXT, open_count INTEGER NOT NULL DEFAULT 0 CHECK (open_count >= 0), FOREIGN KEY(owner_id) REFERENCES users(id))")
+        connection.execute("CREATE TABLE IF NOT EXISTS tracks (tracking_id TEXT PRIMARY KEY, owner_id INTEGER, recipient TEXT NOT NULL, subject TEXT NOT NULL, sent_at TEXT NOT NULL, first_opened_at TEXT, last_opened_at TEXT, open_count INTEGER NOT NULL DEFAULT 0 CHECK (open_count >= 0), last_ip TEXT, last_user_agent TEXT, last_device_fingerprint TEXT, last_geo_country TEXT, FOREIGN KEY(owner_id) REFERENCES users(id))")
         columns = {row[1] for row in connection.execute("PRAGMA table_info(tracks)")}
         if "owner_id" not in columns:
             connection.execute("ALTER TABLE tracks ADD COLUMN owner_id INTEGER")
+        for column in ("last_ip", "last_user_agent", "last_device_fingerprint", "last_geo_country"):
+            if column not in columns:
+                connection.execute(f"ALTER TABLE tracks ADD COLUMN {column} TEXT")
 
 def create_user(username: str) -> tuple[dict, str]:
     token = "mt_" + secrets.token_urlsafe(32)
@@ -95,10 +103,11 @@ def list_tracks(owner_id: int) -> list[dict]:
     with connect() as connection:
         return [dict(row) for row in connection.execute("SELECT * FROM tracks WHERE owner_id = ? ORDER BY sent_at DESC", (owner_id,)).fetchall()]
 
-def record_open(tracking_id: str) -> dict | None:
+def record_open(tracking_id: str, ip: str, user_agent: str, geo_country: str | None) -> dict | None:
     opened_at = utc_now_iso()
+    fingerprint = device_fingerprint(ip, user_agent)
     with connect() as connection:
-        cursor = connection.execute("UPDATE tracks SET first_opened_at = COALESCE(first_opened_at, ?), last_opened_at = ?, open_count = open_count + 1 WHERE tracking_id = ?", (opened_at, opened_at, tracking_id))
+        cursor = connection.execute("UPDATE tracks SET first_opened_at = COALESCE(first_opened_at, ?), last_opened_at = ?, open_count = open_count + 1, last_ip = ?, last_user_agent = ?, last_device_fingerprint = ?, last_geo_country = ? WHERE tracking_id = ?", (opened_at, opened_at, ip, user_agent, fingerprint, geo_country, tracking_id))
         if cursor.rowcount == 0:
             return None
         return dict(connection.execute("SELECT * FROM tracks WHERE tracking_id = ?", (tracking_id,)).fetchone())

@@ -81,7 +81,7 @@ MailExtension/
          → 生成 tracking_id、POST /api/tracks、插入 pixel
          → onAfterSend 保存本地记录和 Message-ID
 
-收件端 → GET /open/{tracking_id}.png → SQLite 更新打开状态
+收件端 → GET /open/{tracking_id}.png → SQLite 更新打开状态与最近一次访问信息
 Popup  → Bearer Token → 查询 FastAPI 追踪状态
 ```
 
@@ -192,4 +192,4 @@ ghcr.io/<github-owner>/<repository>-tracker:latest
 
 ## MVP 边界
 
-当前版本只支持 HTML 邮件和单个收件人，暂不实现链接点击追踪、多收件人分别追踪、邮件列表自定义列、OAuth、推送通知、IP、User-Agent、设备指纹、地理位置和图表统计。
+当前版本只支持 HTML 邮件和单个收件人，暂不实现链接点击追踪、多收件人分别追踪、邮件列表自定义列、OAuth、推送通知、访问历史明细、精确经纬度和图表统计。后端会为每条记录保存最近一次请求的 IP、User-Agent、不可逆设备指纹和 Cloudflare 国家代码；这些字段在 Popup 的“访问详情”中默认折叠显示。

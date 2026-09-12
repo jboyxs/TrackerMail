@@ -148,6 +148,10 @@ dl {
   margin: 10px 0 0;
 }
 
+.technical-details { margin-top: 12px; border-top: 1px solid #4b5058; padding-top: 9px; }
+.technical-details summary { color: #8e8e93; cursor: pointer; font-size: .85rem; }
+.technical-details dl { margin-top: 9px; }
+
 dt {
   color: #aeb4bd;
 }

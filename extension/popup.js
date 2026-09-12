@@ -144,6 +144,10 @@ async function loadRecords() {
       fragment.querySelector(".first-opened-at").textContent = formatDate(record.first_opened_at);
       fragment.querySelector(".last-opened-at").textContent = formatDate(record.last_opened_at);
       fragment.querySelector(".open-count").textContent = String(record.open_count || 0);
+      fragment.querySelector(".last-ip").textContent = record.last_ip || "—";
+      fragment.querySelector(".last-user-agent").textContent = record.last_user_agent || "—";
+      fragment.querySelector(".last-device-fingerprint").textContent = record.last_device_fingerprint || "—";
+      fragment.querySelector(".last-geo-country").textContent = record.last_geo_country || "—";
       const deleteButton = fragment.querySelector(".delete-record");
       deleteButton.addEventListener("click", async () => {
         deleteButton.disabled = true;
