@@ -6,7 +6,7 @@
 
 “检测到打开 / Opened detected”只表示 tracking pixel URL 被请求，不等同于收件人真实阅读了邮件。Gmail 图片代理、Apple Mail Privacy Protection、企业邮箱安全扫描以及远程图片拦截，都可能造成误报或漏报。
 
-<h2 align="center" style="font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI','Microsoft YaHei',sans-serif;"><sup>“</sup>AI 还是太好用了，我是 AI 大人的狗。<sup>”</sup></h2>
+<h2 align="center" style="font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI','Microsoft YaHei',sans-serif;"><sup>“</sup>AI 还是太好用了<sup>”</sup></h2>
 
 <p align="center">
   <img src="resource/imagefront1.jpg" alt="Mail Tracker 主界面" width="48%" />
