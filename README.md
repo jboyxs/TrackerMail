@@ -5,7 +5,23 @@
 用户在 HTML 写信窗口中主动启用追踪后，扩展会生成唯一 `tracking_id`，在正文末尾加入 1×1 透明 tracking pixel。收件端加载图片时，FastAPI 后端记录检测时间和次数，扩展页面查询并展示追踪状态。
 
 “检测到打开 / Opened detected”只表示 tracking pixel URL 被请求，不等同于收件人真实阅读了邮件。Gmail 图片代理、Apple Mail Privacy Protection、企业邮箱安全扫描以及远程图片拦截，都可能造成误报或漏报。
-
+## 使用效果及使用教程
+### 远端服务部署参考下面部署章节
+推荐uv，我喜欢uv，uv是正确的，有谁不喜欢快快的uv呢。当然docker里用的也是uv，docker的好处是隔离。
+### client端也就是客户端
+1.您需要先下载github action自动构建的.xpi插件（.zip解压之后），目前是会每次自动构建。
+![Thunderbird 扩展下载](resource/image1.png)
+2.下载完后在 Thunderbird中按 侧边栏左下角设置->扩展和主题->右上角设置->从文件安装附加组件，选择解压出的.xpi文件即可。
+![Thunderbird 安装入口](resource/image2.png)
+![选择 XPI 文件](resource/image3.png)
+3.完成远端服务器的url user token的设置
+![插件连接配置](resource/image4.png)
+4.enjoy it
+发送的时候注意点击开启邮件追踪，如下图红框。
+注意一般接收端服务器会自动发出一次请求，所以一般请求数量大于等于2时，对方才可能阅读了。
+![写信时启用追踪](resource/image5.png)
+成功喵
+![检测结果](resource/image6.png)
 ## 项目层级
 
 ```text
@@ -80,6 +96,51 @@ docker compose logs -f tracker-api
 ```bash
 docker compose down
 ```
+
+### 使用 GitHub Actions 已构建的镜像
+
+GitHub Actions 发布的镜像地址为：
+
+```text
+ghcr.io/jboyxs/trackermail-tracker:latest
+```
+
+在服务器上创建 `docker-compose.image.yml`：
+
+```yaml
+services:
+  tracker-api:
+    image: ghcr.io/jboyxs/trackermail-tracker:latest
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      DATABASE_PATH: /data/tracker.db
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-jjboy}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env}
+    volumes:
+      - tracker_data:/data
+    restart: unless-stopped
+
+volumes:
+  tracker_data:
+```
+
+然后准备仅保存在服务器上的 `.env` 并启动：
+
+```bash
+printf 'ADMIN_USERNAME=your-admin-name\nADMIN_PASSWORD=replace-with-a-strong-password\n' > .env
+chmod 600 .env
+docker compose -f docker-compose.image.yml pull
+docker compose -f docker-compose.image.yml up -d
+```
+
+如果 GHCR 镜像设置为私有，先使用具有 `read:packages` 权限的 GitHub Token 登录：
+
+```bash
+echo "$GITHUB_TOKEN" | docker login ghcr.io -u GITHUB_USERNAME --password-stdin
+```
+
+升级镜像时执行 `pull` 和 `up -d`；SQLite 数据会继续保存在 `tracker_data` volume 中。Cloudflare Tunnel 等反向代理仍应只转发到本机的 `127.0.0.1:8000`。
 
 ### Thunderbird 加载插件
 
