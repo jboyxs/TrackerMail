@@ -12,7 +12,7 @@ AI还是太好用了，我是AI大人的狗。
   <img src="resource/imagefront2.jpg" alt="Mail Tracker 设置界面" width="48%" />
 </p>
 
-<h1 align="center" style="font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI','Microsoft YaHei',sans-serif;"><sup>“</sup>AI 还是太好用了，我是 AI 大人的狗。<sup>”</sup></h1>
+<h2 align="center" style="font-family:-apple-system,BlinkMacSystemFont,'Inter','Segoe UI','Microsoft YaHei',sans-serif;"><sup>“</sup>AI 还是太好用了，我是 AI 大人的狗。<sup>”</sup></h2>
 
 ## 使用效果及使用教程
 ### 远端服务部署参考下面部署章节
