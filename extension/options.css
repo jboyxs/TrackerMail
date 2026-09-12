@@ -1,0 +1,36 @@
+:root {
+  color-scheme: light dark;
+  font: message-box;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  background: Canvas;
+  color: CanvasText;
+}
+
+main {
+  max-width: 680px;
+}
+
+form {
+  display: grid;
+  gap: 10px;
+}
+
+input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px;
+}
+
+button {
+  justify-self: start;
+  padding: 7px 18px;
+}
+
+.hint,
+#status {
+  color: GrayText;
+}

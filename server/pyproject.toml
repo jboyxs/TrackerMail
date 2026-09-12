@@ -1,0 +1,12 @@
+[project]
+name = "thunderbird-mail-tracker-server"
+version = "0.1.0"
+description = "FastAPI tracking-pixel backend for the Thunderbird Mail Tracker MVP"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi==0.116.1",
+    "uvicorn[standard]==0.35.0",
+]
+
+[tool.uv]
+package = false

@@ -1,0 +1,142 @@
+:root {
+  color-scheme: light dark;
+  font: message-box;
+}
+
+body {
+  box-sizing: border-box;
+  width: 360px;
+  max-width: 360px;
+  min-width: 360px;
+  min-height: 240px;
+  margin: 0;
+  padding: 16px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #202124;
+  color: #f1f3f4;
+  font-family: sans-serif;
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background: #ffffff;
+    color: #202124;
+  }
+}
+
+header,
+.record-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+header p,
+#message {
+  color: #aeb4bd;
+}
+
+.configuration {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid #4b5058;
+  border-radius: 8px;
+}
+
+.configuration h2 {
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.configuration form {
+  display: grid;
+  gap: 6px;
+}
+
+.configuration input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 7px;
+  border: 1px solid #68707c;
+  border-radius: 4px;
+  background: #303238;
+  color: #f1f3f4;
+}
+
+@media (prefers-color-scheme: light) {
+  .configuration {
+    border-color: #c7cbd1;
+  }
+
+  .configuration input {
+    background: #fff;
+    color: #202124;
+  }
+}
+
+button {
+  padding: 7px 14px;
+}
+
+#message {
+  min-height: 20px;
+  margin: 12px 0;
+}
+
+.record {
+  margin: 10px 0;
+  padding: 12px;
+  border: 1px solid #4b5058;
+  border-radius: 8px;
+}
+
+@media (prefers-color-scheme: light) {
+  .record {
+    border-color: #c7cbd1;
+  }
+}
+
+h2 {
+  overflow: hidden;
+  font-size: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status {
+  flex: none;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #64748b;
+  color: white;
+  font-size: 0.8rem;
+}
+
+.status.opened {
+  background: #15803d;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 5px 8px;
+  margin: 10px 0 0;
+}
+
+dt {
+  color: #aeb4bd;
+}
+
+dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mail Tracker settings</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <h1>Mail Tracker settings</h1>
+      <form id="settings-form">
+        <label for="server-url">Tracking Server URL</label>
+        <input id="server-url" name="serverUrl" type="url" required placeholder="https://tracker.775772.xyz" />
+        <p class="hint">Do not include <code>/api/tracks</code>. The manifest permits the public tracker plus localhost development servers.</p>
+        <label for="api-username">Username / 用户名</label>
+        <input id="api-username" name="apiUsername" type="text" autocomplete="username" required />
+        <label for="api-token">API Token</label>
+        <input id="api-token" name="apiToken" type="password" autocomplete="off" required />
+        <p class="hint">Paste the token created in the Tracker admin page.</p>
+        <button type="submit">Save</button>
+      </form>
+      <p id="status" role="status"></p>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>

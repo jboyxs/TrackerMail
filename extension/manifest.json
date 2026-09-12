@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "Thunderbird Mail Tracker MVP",
+  "description": "Adds an opt-in tracking pixel to a single-recipient HTML email and displays detected pixel loads.",
+  "version": "0.2.0",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "mail-tracker-mvp@example.local",
+      "strict_min_version": "128.0"
+    }
+  },
+  "permissions": [
+    "compose",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://localhost:8000/*",
+    "http://127.0.0.1:8000/*",
+    "https://tracker.775772.xyz/*"
+  ],
+  "background": {
+    "scripts": [
+      "compose.js",
+      "background.js"
+    ]
+  },
+  "action": {
+    "default_title": "Mail tracking records",
+    "default_popup": "popup.html",
+    "default_icon": "icons/tracker.svg"
+  },
+  "compose_action": {
+    "default_title": "Track Email: off",
+    "default_label": "Track Email",
+    "default_icon": "icons/tracker.svg"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "icons": {
+    "32": "icons/tracker.svg",
+    "64": "icons/tracker.svg"
+  }
+}

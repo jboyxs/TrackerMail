@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mail tracking records</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Mail tracking</h1>
+        <p>Remote image load detections</p>
+      </div>
+      <button id="refresh" type="button">Refresh</button>
+    </header>
+    <p id="message" role="status"></p>
+    <section class="configuration">
+      <h2>Connection settings / 连接设置</h2>
+      <form id="configuration-form">
+        <label for="server-url">Tracking Server URL</label>
+        <input id="server-url" type="url" required placeholder="https://tracker.775772.xyz" />
+        <label for="api-username">Username / 用户名</label>
+        <input id="api-username" type="text" required autocomplete="username" />
+        <label for="api-token">API Token</label>
+        <input id="api-token" type="password" required autocomplete="off" />
+        <button type="submit">Save settings / 保存配置</button>
+      </form>
+    </section>
+    <main id="records"></main>
+    <template id="record-template">
+      <article class="record">
+        <div class="record-heading">
+          <h2 class="subject"></h2>
+          <span class="status"></span>
+        </div>
+        <dl>
+          <dt>Subject / 主题</dt><dd class="subject-detail"></dd>
+          <dt>Recipient</dt><dd class="recipient"></dd>
+          <dt>Tracking ID</dt><dd class="tracking-id"></dd>
+          <dt>Sent at</dt><dd class="sent-at"></dd>
+          <dt>First opened</dt><dd class="first-opened-at"></dd>
+          <dt>Last opened</dt><dd class="last-opened-at"></dd>
+          <dt>Open count</dt><dd class="open-count"></dd>
+        </dl>
+      </article>
+    </template>
+    <script src="popup.js"></script>
+  </body>
+</html>
