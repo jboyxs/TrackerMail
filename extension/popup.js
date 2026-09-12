@@ -6,6 +6,15 @@ const configurationForm = document.querySelector("#configuration-form");
 const serverUrlInput = document.querySelector("#server-url");
 const apiUsernameInput = document.querySelector("#api-username");
 const apiTokenInput = document.querySelector("#api-token");
+const health = document.querySelector("#health");
+const settingsToggle = document.querySelector("#settings-toggle");
+const configuration = document.querySelector("#configuration");
+
+settingsToggle.addEventListener("click", () => {
+  const expanded = settingsToggle.getAttribute("aria-expanded") === "true";
+  settingsToggle.setAttribute("aria-expanded", String(!expanded));
+  configuration.hidden = expanded;
+});
 
 function formatDate(value) {
   return value ? new Date(value).toLocaleString() : "—";
@@ -29,6 +38,20 @@ async function restoreConfiguration() {
   serverUrlInput.value = trackingSettings.serverUrl || "https://tracker.775772.xyz";
   apiUsernameInput.value = trackingSettings.apiUsername || "";
   apiTokenInput.value = trackingSettings.apiToken || "";
+}
+
+async function checkHealth(serverUrl) {
+  health.textContent = "Checking…";
+  health.className = "health pending";
+  try {
+    const response = await fetch(`${serverUrl}/health`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    health.textContent = "Online";
+    health.className = "health online";
+  } catch {
+    health.textContent = "Offline";
+    health.className = "health offline";
+  }
 }
 
 configurationForm.addEventListener("submit", async (event) => {
@@ -60,7 +83,13 @@ async function loadRecords() {
       getConfiguration(),
     ]);
     const apiToken = trackingSettings.apiToken || "";
-    if (!apiToken) throw new Error("API Token is not configured. Open Mail Tracker Options first.");
+    await checkHealth(serverUrl);
+    if (!apiToken) {
+      message.textContent = "API Token is not configured. Open Settings to enter it.";
+      configuration.hidden = false;
+      settingsToggle.setAttribute("aria-expanded", "true");
+      return;
+    }
     const localRecords = Object.values(trackingRecords)
       .sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at));
 
@@ -97,6 +126,24 @@ async function loadRecords() {
       fragment.querySelector(".first-opened-at").textContent = formatDate(record.first_opened_at);
       fragment.querySelector(".last-opened-at").textContent = formatDate(record.last_opened_at);
       fragment.querySelector(".open-count").textContent = String(record.open_count || 0);
+      const deleteButton = fragment.querySelector(".delete-record");
+      deleteButton.addEventListener("click", async () => {
+        deleteButton.disabled = true;
+        try {
+          const response = await fetch(`${serverUrl}/api/tracks/${encodeURIComponent(record.tracking_id)}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${apiToken}` },
+          });
+          if (!response.ok && response.status !== 404) throw new Error(`HTTP ${response.status}`);
+          const { trackingRecords = {} } = await messenger.storage.local.get("trackingRecords");
+          delete trackingRecords[record.tracking_id];
+          await messenger.storage.local.set({ trackingRecords });
+          await loadRecords();
+        } catch (error) {
+          deleteButton.disabled = false;
+          message.textContent = `Delete failed: ${error.message}`;
+        }
+      });
       const status = fragment.querySelector(".status");
       const opened = (record.open_count || 0) > 0;
       status.textContent = opened ? "Opened detected / 检测到打开" : "No open detected";

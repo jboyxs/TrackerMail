@@ -193,6 +193,7 @@ GET http://localhost:8000/api/tracks
 | `GET` | `/open/{tracking_id}.png` | 记录一次图片加载并返回透明 PNG |
 | `GET` | `/api/tracks/{tracking_id}` | 查询单条状态 |
 | `GET` | `/api/tracks` | 查询全部状态 |
+| `DELETE` | `/api/tracks/{tracking_id}` | 删除当前用户自己的记录 |
 
 ## 管理员和多用户 Token
 
@@ -207,6 +208,8 @@ https://tracker.775772.xyz/admin
 API Token 会隔离 `/api/tracks` 的创建、列表和单条查询；用户只能看到自己创建的追踪记录。`/open/{tracking_id}.png` 不要求 Token，因为收件人的邮件客户端不会携带发件人的认证信息。
 
 管理员可以在用户列表中点击 **Disable** 停用用户。停用是软删除：Token 立即失效，历史 tracking 数据保留但不再对该用户 API 返回。
+
+如果用户忘记 Token，管理员可以点击 **Reset token**。旧 Token 会立即失效，新 Token 只显示一次；用户名和历史 tracking 记录不变。扩展 popup 中的 **Delete / 删除** 会直接删除当前用户的 tracking 记录，不再弹出二次确认。
 
 部署时将 `server/.env.example` 复制为 `server/.env`，设置 `ADMIN_USERNAME` 和 `ADMIN_PASSWORD`，再运行 `docker compose up -d --build`。`.env` 不应提交到 Git。
 

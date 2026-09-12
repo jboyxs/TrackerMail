@@ -12,10 +12,11 @@
         <h1>Mail tracking</h1>
         <p>Remote image load detections</p>
       </div>
-      <button id="refresh" type="button">Refresh</button>
+      <div class="header-actions"><span id="health" class="health pending">Checking…</span><button id="refresh" class="secondary-button" type="button">Refresh</button></div>
     </header>
     <p id="message" role="status"></p>
-    <section class="configuration">
+    <button id="settings-toggle" class="settings-button" type="button" aria-expanded="false">⚙ Settings / 设置</button>
+    <section id="configuration" class="configuration" hidden>
       <h2>Connection settings / 连接设置</h2>
       <form id="configuration-form">
         <label for="server-url">Tracking Server URL</label>
@@ -24,7 +25,7 @@
         <input id="api-username" type="text" required autocomplete="username" />
         <label for="api-token">API Token</label>
         <input id="api-token" type="password" required autocomplete="off" />
-        <button type="submit">Save settings / 保存配置</button>
+        <button class="primary-button" type="submit">Save settings / 保存配置</button>
       </form>
     </section>
     <main id="records"></main>
@@ -43,6 +44,7 @@
           <dt>Last opened</dt><dd class="last-opened-at"></dd>
           <dt>Open count</dt><dd class="open-count"></dd>
         </dl>
+        <button class="delete-record" type="button">Delete / 删除</button>
       </article>
     </template>
     <script src="popup.js"></script>

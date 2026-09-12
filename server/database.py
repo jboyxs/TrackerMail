@@ -50,6 +50,15 @@ def create_user(username: str) -> tuple[dict, str]:
         row = connection.execute("SELECT id, username, created_at, disabled FROM users WHERE id = ?", (cursor.lastrowid,)).fetchone()
     return dict(row), token
 
+def reset_user_token(user_id: int) -> tuple[dict, str] | None:
+    token = "mt_" + secrets.token_urlsafe(32)
+    with connect() as connection:
+        cursor = connection.execute("UPDATE users SET token_hash = ? WHERE id = ?", (hash_token(token), user_id))
+        if cursor.rowcount == 0:
+            return None
+        row = connection.execute("SELECT id, username, created_at, disabled FROM users WHERE id = ?", (user_id,)).fetchone()
+    return dict(row), token
+
 def list_users() -> list[dict]:
     with connect() as connection:
         return [dict(row) for row in connection.execute("SELECT id, username, created_at, disabled FROM users ORDER BY created_at").fetchall()]
@@ -76,6 +85,11 @@ def get_track(tracking_id: str, owner_id: int) -> dict | None:
     with connect() as connection:
         row = connection.execute("SELECT * FROM tracks WHERE tracking_id = ? AND owner_id = ?", (tracking_id, owner_id)).fetchone()
     return dict(row) if row else None
+
+def delete_track(tracking_id: str, owner_id: int) -> bool:
+    with connect() as connection:
+        cursor = connection.execute("DELETE FROM tracks WHERE tracking_id = ? AND owner_id = ?", (tracking_id, owner_id))
+    return cursor.rowcount > 0
 
 def list_tracks(owner_id: int) -> list[dict]:
     with connect() as connection:

@@ -13,7 +13,7 @@ body {
   padding: 16px;
   overflow-x: hidden;
   overflow-y: auto;
-  background: #202124;
+  background: #1c1c1e;
   color: #f1f3f4;
   font-family: sans-serif;
 }
@@ -84,6 +84,12 @@ header p,
 
 button {
   padding: 7px 14px;
+  border: 1px solid #63636a;
+  border-radius: 8px;
+  background: #2c2c2e;
+  color: #f1f3f4;
+  cursor: pointer;
+  font-weight: 600;
 }
 
 #message {
@@ -140,3 +146,22 @@ dd {
   margin: 0;
   overflow-wrap: anywhere;
 }
+
+.delete-record {
+  margin-top: 12px;
+  background: #b91c1c;
+}
+
+.header-actions { display:flex; align-items:center; gap:8px; }
+.secondary-button { white-space:nowrap; }
+.health { font-size:.75rem; white-space:nowrap; }
+.health::before { display:inline-block; width:7px; height:7px; margin-right:4px; border-radius:50%; background:#8e8e93; content:""; }
+.health.online::before { background:#30d158; }
+.health.offline::before { background:#ff453a; }
+.settings-button { width:100%; margin:8px 0; text-align:left; }
+.primary-button { border-color:#0a84ff; background:#0a84ff; }
+.primary-button:hover { background:#409cff; }
+.delete-record { width:34px; height:30px; padding:0; border-color:#ff453a; border-radius:15px; background:transparent; color:#ff6961; font-size:0; }
+.delete-record::before { content:"⌫"; font-size:17px; }
+.delete-record:hover { background:#4b1f20; }
+.configuration { border-radius:12px; background:#242426; }

@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials, HTTPAuthorizationCredentials, HTTPBearer
 
-from database import create_track, create_user, disable_user, find_user_by_token, get_track, initialize_database, list_tracks, list_users, record_open
+from database import create_track, create_user, delete_track, disable_user, find_user_by_token, get_track, initialize_database, list_tracks, list_users, record_open, reset_user_token
 from models import TrackCreate, TrackRead, UserCreate, UserCreated, UserRead
 
 TRANSPARENT_PNG = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+X8E1WQAAAABJRU5ErkJggg==")
@@ -67,6 +67,14 @@ async def admin_disable_user(user_id: int, _: str = Depends(require_admin)) -> R
         raise HTTPException(status_code=404, detail="Active user not found")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
+@app.post("/api/admin/users/{user_id}/reset-token", response_model=UserCreated)
+async def admin_reset_token(user_id: int, _: str = Depends(require_admin)) -> dict:
+    result = reset_user_token(user_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    user, token = result
+    return {**user, "disabled": bool(user["disabled"]), "token": token}
+
 @app.post("/api/tracks", response_model=TrackRead, status_code=status.HTTP_201_CREATED)
 async def post_track(track: TrackCreate, user: dict = Depends(require_user)) -> dict:
     try:
@@ -84,6 +92,12 @@ async def get_one_track(tracking_id: str, user: dict = Depends(require_user)) ->
 @app.get("/api/tracks", response_model=list[TrackRead])
 async def get_all_tracks(user: dict = Depends(require_user)) -> list[dict]:
     return list_tracks(user["id"])
+
+@app.delete("/api/tracks/{tracking_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_one_track(tracking_id: str, user: dict = Depends(require_user)) -> Response:
+    if not delete_track(tracking_id, user["id"]):
+        raise HTTPException(status_code=404, detail="Tracking record not found")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @app.get("/open/{tracking_id}.png", include_in_schema=False)
 async def open_pixel(tracking_id: str) -> Response:
