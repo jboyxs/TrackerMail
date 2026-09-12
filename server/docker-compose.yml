@@ -8,7 +8,6 @@ services:
       ADMIN_USERNAME: ${ADMIN_USERNAME:-jjboy}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in server/.env}
       FINGERPRINT_SALT: ${FINGERPRINT_SALT:?Set FINGERPRINT_SALT in server/.env}
-      GEOIP_DATABASE_PATH: /data/GeoLite2-City.mmdb
     volumes:
       - tracker_data:/data
     restart: unless-stopped

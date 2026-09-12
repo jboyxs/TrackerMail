@@ -6,7 +6,6 @@ requires-python = ">=3.11"
 dependencies = [
     "fastapi==0.116.1",
     "uvicorn[standard]==0.35.0",
-    "geoip2==5.1.0",
 ]
 
 [tool.uv]

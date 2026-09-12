@@ -46,7 +46,7 @@ def initialize_database() -> None:
         columns = {row[1] for row in connection.execute("PRAGMA table_info(tracks)")}
         if "owner_id" not in columns:
             connection.execute("ALTER TABLE tracks ADD COLUMN owner_id INTEGER")
-        for column in ("last_ip", "last_user_agent", "last_device_fingerprint", "last_geo_country", "last_geo_region", "last_geo_city"):
+        for column in ("last_ip", "last_user_agent", "last_device_fingerprint", "last_geo_country"):
             if column not in columns:
                 connection.execute(f"ALTER TABLE tracks ADD COLUMN {column} TEXT")
 
@@ -103,11 +103,11 @@ def list_tracks(owner_id: int) -> list[dict]:
     with connect() as connection:
         return [dict(row) for row in connection.execute("SELECT * FROM tracks WHERE owner_id = ? ORDER BY sent_at DESC", (owner_id,)).fetchall()]
 
-def record_open(tracking_id: str, ip: str, user_agent: str, geo_country: str | None, geo_region: str | None, geo_city: str | None) -> dict | None:
+def record_open(tracking_id: str, ip: str, user_agent: str, geo_country: str | None) -> dict | None:
     opened_at = utc_now_iso()
     fingerprint = device_fingerprint(ip, user_agent)
     with connect() as connection:
-        cursor = connection.execute("UPDATE tracks SET first_opened_at = COALESCE(first_opened_at, ?), last_opened_at = ?, open_count = open_count + 1, last_ip = ?, last_user_agent = ?, last_device_fingerprint = ?, last_geo_country = ?, last_geo_region = ?, last_geo_city = ? WHERE tracking_id = ?", (opened_at, opened_at, ip, user_agent, fingerprint, geo_country, geo_region, geo_city, tracking_id))
+        cursor = connection.execute("UPDATE tracks SET first_opened_at = COALESCE(first_opened_at, ?), last_opened_at = ?, open_count = open_count + 1, last_ip = ?, last_user_agent = ?, last_device_fingerprint = ?, last_geo_country = ? WHERE tracking_id = ?", (opened_at, opened_at, ip, user_agent, fingerprint, geo_country, tracking_id))
         if cursor.rowcount == 0:
             return None
         return dict(connection.execute("SELECT * FROM tracks WHERE tracking_id = ?", (tracking_id,)).fetchone())

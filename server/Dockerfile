@@ -13,7 +13,7 @@ COPY pyproject.toml uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --no-install-project
 
-COPY main.py database.py models.py geoip.py admin.html entrypoint.sh ./
+COPY main.py database.py models.py admin.html entrypoint.sh ./
 RUN useradd --create-home --uid 10001 app && mkdir -p /data && chown -R app:app /app /data
 
 ENV PATH="/app/.venv/bin:$PATH"
